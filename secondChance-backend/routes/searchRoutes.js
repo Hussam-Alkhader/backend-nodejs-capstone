@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const connectToDatabase = require('../models/db');
+require('dotenv').config();
+const mongoCollectionName = process.env.MONGO_COLLECTION;
 
 // Search for secondChanceItems
 router.get('/', async (req, res, next) => {
     try {
         // Connect to MongoDB using connectToDatabase and store the connection in `db`
         const db = await connectToDatabase();
-        const collection = db.collection("secondChanceItems");
+        const collection = db.collection(mongoCollectionName);
 
         // Initialize the query object
         let query = {};

@@ -5,6 +5,7 @@ const fs = require('fs');
 const router = express.Router();
 const connectToDatabase = require('../models/db');
 const logger = require('../logger');
+const mongoCollectionName = process.env.MONGO_COLLECTION;
 
 // Define the upload directory path
 const directoryPath = 'public/images';
@@ -29,7 +30,7 @@ router.get('/', async (req, res, next) => {
         //Step 2: task 1 - insert code here
         const db = await connectToDatabase();
         //Step 2: task 2 - insert code here
-        const collection = db.collection("secondChanceItems");
+        const collection = db.collection(mongoCollectionName);
         //Step 2: task 3 - insert code here
         const secondChanceItems = await collection.find({}).toArray();
         //Step 2: task 4 - insert code here
@@ -49,7 +50,7 @@ router.post('/', upload.single('file'), async (req, res, next) => {
         //Step 3: task 1 - insert code here
         const db = await connectToDatabase();
         //Step 3: task 2 - insert code here
-        const collection = db.collection("secondChanceItems");
+        const collection = db.collection(mongoCollectionName);
         //Step 3: task 3 - insert code here
         let secondChanceItem = req.body;
         //Step 3: task 4 - insert code here
@@ -79,7 +80,7 @@ router.get('/:id', async (req, res, next) => {
         //Step 4: task 1 - insert code here
         const db = await connectToDatabase();
         //Step 4: task 2 - insert code here
-        const collection = db.collection("secondChanceItems");
+        const collection = db.collection(mongoCollectionName);
         //Step 4: task 3 - insert code here
         const idProvided = req.params.id;
         const secondChanceItem = await collection.findOne({ "id": idProvided });
@@ -100,7 +101,7 @@ router.put('/:id', async (req, res, next) => {
         //Step 5: task 1 - insert code here
         const db = await connectToDatabase();
         //Step 5: task 2 - insert code here
-        const collection = db.collection("secondChanceItems");
+        const collection = db.collection(mongoCollectionName);
         //Step 5: task 3 - insert code here
         const idProvided = req.params.id;
         const { category, condition, age_days, description } = req.body;
@@ -138,7 +139,7 @@ router.delete('/:id', async (req, res, next) => {
         //Step 6: task 1 - insert code here
         const db = await connectToDatabase();
         //Step 6: task 2 - insert code here
-        const collection = db.collection("secondChanceItems");
+        const collection = db.collection(mongoCollectionName);
         //Step 6: task 3 - insert code here
         const idProvided = req.params.id;
         const secondChanceItem = await collection.findOne({ "id": idProvided });
