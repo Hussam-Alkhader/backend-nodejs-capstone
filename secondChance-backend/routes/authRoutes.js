@@ -39,7 +39,7 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         const newUser = {
             firstName: firstName,
-            lastName:lastName,
+            lastName: lastName,
             email: email,
             password: hashedPassword,
             createdAt: new Date(),
@@ -57,6 +57,50 @@ router.post('/register', async (req, res) => {
         logger.info('User registered successfully');
 
         res.status(201).json({ authtoken, email });
+    } catch (e) {
+        logger.error(e);
+        return res.status(500).send('Internal server error');
+    }
+});
+
+
+router.post('/login', async (req, res) => {
+    try {
+        //Connect to `secondChance` in MongoDB through `connectToDatabase` in `db.js`.
+        const db = await connectToDatabase();
+        const collection = db.collection(mongoCollectionName);
+
+        const { email, password } = req.body;
+
+        const existingUser = await collection.findOne({ "email": email });
+
+        if (existingUser) {
+            // Compare provided password with stored hashed password
+            let result = await bcrypt.compare(password, existingUser.password);
+
+            if (result) {
+                // Create JWT payload
+                let payload = {
+                    user: {
+                        id: existingUser._id.toString(),
+                    },
+                };
+
+                // Sign JWT and send as response
+                const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+
+                logger.info('User login successfully');
+                return res.status(200).json({ authtoken, user: { userName: existingUser.firstName, email: existingUser.email } });
+            } else {
+                logger.error('Invalid email or password.');
+                return res.status(401).json({ error: 'Invalid email or password.' });
+            }
+        } else {
+            logger.error('Invalid email or password.');
+            return res.status(401).json({ error: 'Invalid email or password.' });
+        }
+
+
     } catch (e) {
         logger.error(e);
         return res.status(500).send('Internal server error');
