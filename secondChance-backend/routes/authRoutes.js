@@ -194,10 +194,10 @@ router.put('/update', async (req, res) => {
         }
 
         let updatedFields = {};
-        if (firstName){updatedFields.firstName = firstName};
-        if (lastName){updatedFields.lastName = lastName};
-        if (emailBody){updatedFields.email = emailBody};
-        
+        if (firstName) { updatedFields.firstName = firstName };
+        if (lastName) { updatedFields.lastName = lastName };
+        if (emailBody) { updatedFields.email = emailBody };
+
         if (password) {
             const saltRounds = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -211,14 +211,15 @@ router.put('/update', async (req, res) => {
             { returnDocument: 'after' }
         );
 
+        
         if (!updatedUser) {
             logger.error('Error updating user');
             return res.status(500).json({ error: "Failed to update user" });
-        }
+        };
 
         const payload = {
             user: {
-                id: updatedUser.value._id.toString(),
+                id: updatedUser._id.toString(),
             },
         };
         const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: '14h' });
@@ -230,6 +231,7 @@ router.put('/update', async (req, res) => {
             message: 'User updated successfully',
             updatedAt: updatedFields.updatedAt
         });
+       
 
     } catch (e) {
         logger.error('Error processing request', { error: e.message, stack: e.stack, requestBody: req.body });
