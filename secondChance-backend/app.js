@@ -7,10 +7,30 @@ const path = require('path');
 const connectToDatabase = require('./models/db');
 const { loadData } = require("./util/import-mongo/index");
 
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const rateLimit = require('express-rate-limit');
+
 
 const app = express();
 app.use("*", cors());
 const port = 3060;
+
+
+// Rate Limiting Settings
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // Time window of 15 minutes
+    max: 100, // Maximum number of requests per IP address in the time window
+    message: 'Too many requests from this IP, please try again later.' // Message to send when rate limit is exceeded
+});
+
+// Apply Rate Limiting to all routes
+app.use(limiter);
+
+// Middleware
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Connect to MongoDB; we just do this one time
 connectToDatabase().then(() => {
