@@ -78,23 +78,27 @@ router.post('/login', async (req, res) => {
             // Compare provided password with stored hashed password
             let result = await bcrypt.compare(password, existingUser.password);
 
-            if (result) {
-                // Create JWT payload
-                let payload = {
-                    user: {
-                        id: existingUser._id.toString(),
-                    },
-                };
-
-                // Sign JWT and send as response
-                const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-
-                logger.info('User login successfully');
-                return res.status(200).json({ authtoken, user: { userName: existingUser.firstName, email: existingUser.email } });
-            } else {
+            //send appropriate message if mismatch
+            if (!result) {
                 logger.error('Invalid email or password.');
                 return res.status(401).json({ error: 'Invalid email or password.' });
             }
+            // Create JWT payload
+            let payload = {
+                user: {
+                    id: existingUser._id.toString(),
+                },
+            };
+
+            const userName = existingUser.firstName;
+            const userEmail = existingUser.email;
+
+            //Create JWT authentication if passwords match
+            const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+
+            logger.info('User login successfully');
+            return res.status(200).json({ authtoken, user: { userName: userName, email: userEmail } });
+            //Send appropriate message if user not found
         } else {
             logger.error('Invalid email or password.');
             return res.status(401).json({ error: 'Invalid email or password.' });
@@ -103,7 +107,7 @@ router.post('/login', async (req, res) => {
 
     } catch (e) {
         logger.error(e);
-        return res.status(500).send('Internal server error');
+        return res.status(500).json({ error: 'Internal server error', details: e.message });
     }
 });
 
