@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const connectToDatabase = require('../models/db');
 require('dotenv').config();
-const mongoCollectionName = process.env.MONGO_COLLECTION;
+const mongoCollectionName = process.env.MONGO_COLLECTION_secondChanceItems;
 
 // Search for secondChanceItems
 router.get('/', async (req, res, next) => {

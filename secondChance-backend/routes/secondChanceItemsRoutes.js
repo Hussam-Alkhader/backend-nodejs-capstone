@@ -5,7 +5,7 @@ const fs = require('fs');
 const router = express.Router();
 const connectToDatabase = require('../models/db');
 const logger = require('../logger');
-const mongoCollectionName = process.env.MONGO_COLLECTION;
+const mongoCollectionName = process.env.MONGO_COLLECTION_secondChanceItems;
 
 // Define the upload directory path
 const directoryPath = 'public/images';

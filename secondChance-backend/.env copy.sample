@@ -1,0 +1,8 @@
+MONGO_URL=mongodb://root:NzEyMC1odXNzYW1h@localhost:27017
+JWT_SECRET=P6bDx7tjvANSaa7TW5/YAOqYZc9y5M3UDsjG1p84lkQ=
+
+MONGO_DB=secondChance
+MONGO_COLLECTION_secondChanceItems=secondChanceItems
+MONGO_COLLECTION_users=users
+
+
