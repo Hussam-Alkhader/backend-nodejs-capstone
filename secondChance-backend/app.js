@@ -1,11 +1,11 @@
-/*jshint esversion: 8 */
+/* jshint esversion: 8 */
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const pinoLogger = require('./logger');
 const path = require('path');
 const connectToDatabase = require('./models/db');
-const { loadData } = require("./util/import-mongo/index");
+
 
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -13,15 +13,15 @@ const rateLimit = require('express-rate-limit');
 
 
 const app = express();
-app.use("*", cors());
+app.use('*', cors());
 const port = 3060;
 
 
 // Rate Limiting Settings
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // Time window of 15 minutes
-    max: 1000, // Maximum number of requests per IP address in the time window
-    message: 'Too many requests from this IP, please try again later.' // Message to send when rate limit is exceeded
+  windowMs: 15 * 60 * 1000, // Time window of 15 minutes
+  max: 1000, // Maximum number of requests per IP address in the time window
+  message: 'Too many requests from this IP, please try again later.' // Message to send when rate limit is exceeded
 });
 
 // Apply Rate Limiting to all routes
@@ -34,9 +34,9 @@ app.use(bodyParser.json());
 
 // Connect to MongoDB; we just do this one time
 connectToDatabase().then(() => {
-    pinoLogger.info('Connected to DB');
-})
-    .catch((e) => console.error('Failed to connect to DB', e));
+  pinoLogger.info('Connected to DB');
+});
+  .catch((e) => console.error('Failed to connect to DB', e));
 
 
 app.use(express.json());
@@ -71,14 +71,14 @@ app.use('/api/secondchance/search', searchRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).send('Internal Server Error');
+  console.error(err);
+  res.status(500).send('Internal Server Error');
 });
 
-app.get("/", (req, res) => {
-    res.send("Inside the server");
-})
+app.get('/', (req, res) => {
+  res.send('Inside the server');
+});
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
