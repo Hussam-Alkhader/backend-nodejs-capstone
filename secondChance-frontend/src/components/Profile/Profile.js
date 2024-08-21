@@ -5,7 +5,7 @@ import {urlConfig} from '../../config';
 import { useAppContext } from '../../context/AppContext';
 
 const Profile = () => {
-  const [userDetails, setUserDetails] = useState({});
+ const [userDetails, setUserDetails] = useState({});
  const [updatedDetails, setUpdatedDetails] = useState({});
  const {setUserName} = useAppContext();
  const [changed, setChanged] = useState("");
@@ -64,6 +64,7 @@ const handleSubmit = async (e) => {
     }
 
     const payload = { ...updatedDetails };
+    console.log(payload);
     const response = await fetch(`${urlConfig.backendUrl}/api/auth/update`, {
       method: "PUT",
       headers: {

@@ -20,7 +20,7 @@ const port = 3060;
 // Rate Limiting Settings
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // Time window of 15 minutes
-    max: 100, // Maximum number of requests per IP address in the time window
+    max: 1000, // Maximum number of requests per IP address in the time window
     message: 'Too many requests from this IP, please try again later.' // Message to send when rate limit is exceeded
 });
 

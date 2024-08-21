@@ -37,12 +37,14 @@ function RegisterPage() {
 
         if (json.authtoken) {
             sessionStorage.setItem('auth-token', json.authtoken);
-            sessionStorage.setItem('name', firstName);
-            sessionStorage.setItem('email', json.email);
+            sessionStorage.setItem('name', json.user.userName);
+            sessionStorage.setItem('email', json.user.userEmail);
+  
             navigate('/app');
             setIsLoggedIn(true);
         }
-        if (json.error) {
+        else if (json.error) {
+            console.log('Registration error:', json.error);
             setShowerr(json.error);
         }
     }

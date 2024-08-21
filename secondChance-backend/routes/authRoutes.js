@@ -47,10 +47,10 @@ router.post('/register', [
         });
 
         if (existingUserByEmail) {
-            return res.status(400).send("User already exists with this email.");
+            return res.status(400).json({error:'User already exists with this email.'});
         }
         if (existingUserByName) {
-            return res.status(400).send("User already exists with this name.");
+            return res.status(400).json({error:'User already exists with this name.'});
         }
         const saltRounds = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -71,20 +71,18 @@ router.post('/register', [
                 id: newUser.insertedId,
             },
         };
-
+        const userName = newUser.firstName;
+        const userEmail = newUser.email;
 
         const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: '14h' }, (err, token) => {
             if (err) {
                 logger.error('Error signing token', err);
                 return res.status(500).json({ error: 'Token generation failed' });
             }
-            return res.status(200).json({ authtoken: token, user: { userName, email: userEmail } });
+            return res.status(200).json({ authtoken: token, user: { userName: userName, userEmail: userEmail } });
         });
 
         logger.info('User registered successfully');
-        res.json({
-            message: 'User registered successfully',
-        });
 
     } catch (e) {
         logger.error(e);
@@ -148,7 +146,7 @@ router.post('/login', async (req, res) => {
                 logger.error('Error signing token', err);
                 return res.status(500).json({ error: 'Token generation failed' });
             }
-            return res.status(200).json({ authtoken: token, user: { userName, email: userEmail } });
+            return res.status(200).json({ authtoken: token, user: { userName: userName, userEmail: userEmail } });
         });
 
         logger.info('User login successfully');
@@ -173,7 +171,7 @@ router.put('/update', async (req, res) => {
 
     try {
 
-        const firstName = req.body.firstName;
+        const firstName = req.body.name;
         const lastName = req.body.lastName;
         const email = req.headers.email;
         const emailBody = req.body.email;
@@ -211,7 +209,7 @@ router.put('/update', async (req, res) => {
             { returnDocument: 'after' }
         );
 
-        
+
         if (!updatedUser) {
             logger.error('Error updating user');
             return res.status(500).json({ error: "Failed to update user" });
@@ -231,7 +229,7 @@ router.put('/update', async (req, res) => {
             message: 'User updated successfully',
             updatedAt: updatedFields.updatedAt
         });
-       
+
 
     } catch (e) {
         logger.error('Error processing request', { error: e.message, stack: e.stack, requestBody: req.body });
